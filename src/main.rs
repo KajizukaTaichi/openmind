@@ -1,11 +1,13 @@
-use std::{env::args, fs::read_to_string};
-
 use regex::Regex;
+use std::{collections::HashMap, env::args, fs::read_to_string};
 
 fn main() {
     if let Some(path) = args().collect::<Vec<String>>().get(1) {
         if let Ok(code) = read_to_string(path) {
-            let mut openmind = Core { stack: vec![] };
+            let mut openmind = Core {
+                stack: vec![],
+                memory: HashMap::new(),
+            };
             openmind.eval(code);
         } else {
             eprintln!("エラー！ファイルが開けませんでした");
@@ -40,6 +42,7 @@ impl Type {
 #[derive(Clone, Debug)]
 struct Core {
     stack: Vec<Type>,
+    memory: HashMap<String, Type>,
 }
 
 impl Core {
@@ -139,6 +142,15 @@ impl Core {
                         let num2 = self.stack.pop()?.get_number();
                         let num1 = self.stack.pop()?.get_number();
                         self.stack.push(Type::Number(num1 / num2));
+                    }
+                    "代入" => {
+                        let name = self.stack.pop()?.get_string();
+                        let value = self.stack.pop()?;
+                        self.memory.insert(name, value);
+                    }
+                    "評価" => {
+                        let code = self.stack.pop()?.get_string();
+                        self.eval(code)?;
                     }
                     _ => return None,
                 }
