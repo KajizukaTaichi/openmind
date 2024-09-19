@@ -22,6 +22,7 @@ fn main() {
 enum Type {
     Number(f64),
     String(String),
+    Bool(bool),
 }
 
 impl Type {
@@ -29,6 +30,13 @@ impl Type {
         match self {
             Type::Number(i) => i.to_owned(),
             Type::String(s) => s.trim().parse().unwrap_or_default(),
+            Type::Bool(b) => {
+                if *b {
+                    1.0
+                } else {
+                    0.0
+                }
+            }
         }
     }
 
@@ -36,6 +44,15 @@ impl Type {
         match self {
             Type::Number(i) => i.to_string(),
             Type::String(s) => s.to_owned(),
+            Type::Bool(b) => if *b { "真" } else { "偽" }.to_string(),
+        }
+    }
+
+    fn get_bool(&self) -> bool {
+        match self {
+            Type::Number(i) => *i != 0.0,
+            Type::String(s) => !s.is_empty(),
+            Type::Bool(b) => *b,
         }
     }
 }
@@ -143,6 +160,35 @@ impl Core {
                         let num2 = self.stack.pop()?.get_number();
                         let num1 = self.stack.pop()?.get_number();
                         self.stack.push(Type::Number(num1 / num2));
+                    }
+                    "等" => {
+                        let str1 = self.stack.pop()?.get_string();
+                        let str1 = self.stack.pop()?.get_string();
+                        self.stack.push(Type::Bool(str1 == str2));
+                    }
+                    "大" => {
+                        let num2 = self.stack.pop()?.get_number();
+                        let num1 = self.stack.pop()?.get_number();
+                        self.stack.push(Type::Bool(num1 > num2));
+                    }
+                    "小" => {
+                        let num2 = self.stack.pop()?.get_number();
+                        let num1 = self.stack.pop()?.get_number();
+                        self.stack.push(Type::Bool(num1 < num2));
+                    }
+                    "和" => {
+                        let bool2 = self.stack.pop()?.get_bool();
+                        let bool1 = self.stack.pop()?.get_bool();
+                        self.stack.push(Type::Bool(bool1 || bool2));
+                    }
+                    "積" => {
+                        let bool2 = self.stack.pop()?.get_bool();
+                        let bool1 = self.stack.pop()?.get_bool();
+                        self.stack.push(Type::Bool(bool1 && bool2));
+                    }
+                    "否" => {
+                        let bool1 = self.stack.pop()?.get_bool();
+                        self.stack.push(Type::Bool(!bool1));
                     }
                     "代入" => {
                         let name = self.stack.pop()?.get_string();
