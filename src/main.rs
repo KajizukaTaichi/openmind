@@ -167,7 +167,7 @@ impl Core {
                     }
                     "等" => {
                         let str1 = self.stack.pop()?.get_string();
-                        let str1 = self.stack.pop()?.get_string();
+                        let str2 = self.stack.pop()?.get_string();
                         self.stack.push(Type::Bool(str1 == str2));
                     }
                     "大" => {
