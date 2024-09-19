@@ -126,6 +126,10 @@ impl Core {
                 self.stack.push(value.to_owned());
             } else if let Ok(i) = token.parse::<f64>() {
                 self.stack.push(Type::Number(i))
+            } else if token == "真" {
+                self.stack.push(Type::Bool(true));
+            } else if token == "偽" {
+                self.stack.push(Type::Bool(false));
             } else if token.starts_with("「") && token.ends_with("」") {
                 let mut token = token.clone();
                 token.remove(token.find("「")?);
