@@ -203,6 +203,26 @@ impl Core {
                         let code = self.stack.pop()?.get_string();
                         self.eval(code)?;
                     }
+                    "条件分岐" => {
+                        let code_false = self.stack.pop()?.get_string();
+                        let code_true = self.stack.pop()?.get_string();
+                        let condition = self.stack.pop()?.get_bool();
+                        if condition {
+                            self.eval(code_true)?;
+                        } else {
+                            self.eval(code_false)?;
+                        }
+                    }
+                    "反復" => {
+                        let code = self.stack.pop()?.get_string();
+                        let condition = self.stack.pop()?.get_string();
+                        while {
+                            self.eval(condition.clone());
+                            self.stack.pop()?.get_bool()
+                        } {
+                            self.eval(code.clone());
+                        }
+                    }
                     _ => return None,
                 }
             }
