@@ -70,7 +70,7 @@ impl Core {
                 }
                 other => {
                     if if let Ok(i) = Regex::new(
-                        r"[あ-ん]|[ア-ン]|[a-z]|[A-Z]| |\n|\t|\r|　|,|、|。|\.|ー|〜|!|！",
+                        r"[あ-ん]|[ア-ン]|[a-z]|[A-Z]| |\n|\t|\r|　|,|、|。|\.|ー|\-|\~|〜|!|！|＾|\^",
                     ) {
                         i
                     } else {
@@ -105,7 +105,9 @@ impl Core {
                 continue;
             }
 
-            if let Ok(i) = token.parse::<f64>() {
+            if let Some(value) = self.memory.get(&token) {
+                self.stack.push(value.to_owned());
+            } else if let Ok(i) = token.parse::<f64>() {
                 self.stack.push(Type::Number(i))
             } else if token.starts_with("「") && token.ends_with("」") {
                 let mut token = token.clone();
