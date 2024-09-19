@@ -2,7 +2,8 @@ use regex::Regex;
 use std::{collections::HashMap, env::args, fs::read_to_string};
 
 fn main() {
-    if let Some(path) = args().collect::<Vec<String>>().get(1) {
+    let args = args().collect::<Vec<String>>();
+    if let Some(path) = args.get(1) {
         if let Ok(code) = read_to_string(path) {
             let mut openmind = Core {
                 stack: vec![],
@@ -98,8 +99,6 @@ impl Core {
 
     fn eval(&mut self, soruce: String) -> Option<()> {
         let tokens = Core::tokenize(soruce)?;
-        dbg!(&tokens);
-
         for token in tokens.iter() {
             let token = token.trim().to_string();
             if token.is_empty() {
