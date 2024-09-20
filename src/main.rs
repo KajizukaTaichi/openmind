@@ -165,6 +165,11 @@ impl Core {
                         let num1 = self.stack.pop()?.get_number();
                         self.stack.push(Type::Number(num1 / num2));
                     }
+                    "余" => {
+                        let num2 = self.stack.pop()?.get_number();
+                        let num1 = self.stack.pop()?.get_number();
+                        self.stack.push(Type::Number(num1 % num2));
+                    }
                     "等" => {
                         let str1 = self.stack.pop()?.get_string();
                         let str2 = self.stack.pop()?.get_string();
