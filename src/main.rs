@@ -23,13 +23,14 @@ enum Type {
     Number(f64),
     String(String),
     Bool(bool),
+    Function(String),
 }
 
 impl Type {
     fn get_number(&self) -> f64 {
         match self {
             Type::Number(i) => i.to_owned(),
-            Type::String(s) => s.trim().parse().unwrap_or_default(),
+            Type::String(s) | Type::Function(s) => s.trim().parse().unwrap_or_default(),
             Type::Bool(b) => {
                 if *b {
                     1.0
@@ -43,7 +44,7 @@ impl Type {
     fn get_string(&self) -> String {
         match self {
             Type::Number(i) => i.to_string(),
-            Type::String(s) => s.to_owned(),
+            Type::String(s) | Type::Function(s) => s.to_owned(),
             Type::Bool(b) => if *b { "真" } else { "偽" }.to_string(),
         }
     }
@@ -51,7 +52,7 @@ impl Type {
     fn get_bool(&self) -> bool {
         match self {
             Type::Number(i) => *i != 0.0,
-            Type::String(s) => !s.is_empty(),
+            Type::String(s) | Type::Function(s) => !s.is_empty(),
             Type::Bool(b) => *b,
         }
     }
@@ -118,7 +119,9 @@ impl Core {
                 continue;
             }
 
-            if let Some(value) = self.memory.get(&token) {
+            if let Some(Type::Function(code)) = self.memory.get(&token) {
+                self.eval(code.to_string());
+            } else if let Some(value) = self.memory.get(&token) {
                 self.stack.push(value.to_owned());
             } else if let Ok(i) = token.parse::<f64>() {
                 self.stack.push(Type::Number(i))
@@ -218,6 +221,11 @@ impl Core {
                         let name = self.stack.pop().unwrap().get_string();
                         let value = self.stack.pop().unwrap();
                         self.memory.insert(name, value);
+                    }
+                    "定義" => {
+                        let name = self.stack.pop().unwrap().get_string();
+                        let code = self.stack.pop().unwrap().get_string();
+                        self.memory.insert(name, Type::Function(code));
                     }
                     "評価" => {
                         let code = self.stack.pop().unwrap().get_string();
