@@ -251,6 +251,11 @@ impl Core {
                             self.eval(code.clone());
                         }
                     }
+                    "読" => {
+                        let path = self.stack.pop().unwrap().get_string();
+                        self.stack
+                            .push(Type::String(read_to_string(path).unwrap_or(String::new())));
+                    }
                     other => self.stack.push(Type::String(other.to_string())),
                 }
             }
