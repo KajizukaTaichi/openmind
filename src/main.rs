@@ -64,7 +64,7 @@ struct Core {
 }
 
 impl Core {
-    fn tokenize(soruce: String) -> Option<Vec<String>> {
+    fn tokenize(soruce: String) -> Vec<String> {
         let mut tokens = Vec::new();
         let mut current_token = String::new();
         let mut in_parentheses: usize = 0;
@@ -86,13 +86,9 @@ impl Core {
                     }
                 }
                 other => {
-                    if if let Ok(i) = Regex::new(
+                    if Regex::new(
                         r"[あ-ん]|[ア-ン]|[a-z]|[A-Z]| |\n|\t|\r|　|,|、|。|\.|ー|\-|\~|〜|!|！|＾|\^|\?|？",
-                    ) {
-                        i
-                    } else {
-                        return None;
-                    }
+                    ).unwrap()
                     .is_match(&other.to_string())
                     {
                         if in_parentheses != 0 {
@@ -111,11 +107,11 @@ impl Core {
         if !(in_parentheses != 0 || current_token.is_empty()) {
             tokens.push(current_token);
         }
-        Some(tokens)
+        tokens
     }
 
-    fn eval(&mut self, soruce: String) -> Option<()> {
-        let tokens = Core::tokenize(soruce)?;
+    fn eval(&mut self, soruce: String) {
+        let tokens = Core::tokenize(soruce);
         for token in tokens.iter() {
             let token = token.trim().to_string();
             if token.is_empty() {
@@ -126,112 +122,130 @@ impl Core {
                 self.stack.push(value.to_owned());
             } else if let Ok(i) = token.parse::<f64>() {
                 self.stack.push(Type::Number(i))
+            } else if Regex::new(r"^[０-９]+(.unwrap():\.[０-９]+)?$")
+                .unwrap()
+                .is_match(&token)
+            {
+                self.stack.push(Type::Number(
+                    token
+                        .replace("０", "0")
+                        .replace("１", "1")
+                        .replace("２", "2")
+                        .replace("３", "3")
+                        .replace("４", "4")
+                        .replace("５", "5")
+                        .replace("６", "6")
+                        .replace("７", "7")
+                        .replace("８", "8")
+                        .replace("９", "9")
+                        .parse()
+                        .unwrap(),
+                ))
             } else if token == "真" {
                 self.stack.push(Type::Bool(true));
             } else if token == "偽" {
                 self.stack.push(Type::Bool(false));
             } else if token.starts_with("「") && token.ends_with("」") {
                 let mut token = token.clone();
-                token.remove(token.find("「")?);
-                token.remove(token.rfind("」")?);
+                token.remove(token.find("「").unwrap());
+                token.remove(token.rfind("」").unwrap());
                 self.stack.push(Type::String(token))
             } else {
                 match token.as_str() {
                     "表示" => {
-                        println!("{}", self.stack.pop()?.get_string());
+                        println!("{}", self.stack.pop().unwrap().get_string());
                     }
                     "結合" => {
-                        let str2 = self.stack.pop()?.get_string();
-                        let str1 = self.stack.pop()?.get_string();
+                        let str2 = self.stack.pop().unwrap().get_string();
+                        let str1 = self.stack.pop().unwrap().get_string();
                         self.stack.push(Type::String(str1 + &str2));
                     }
                     "足" => {
-                        let num2 = self.stack.pop()?.get_number();
-                        let num1 = self.stack.pop()?.get_number();
+                        let num2 = self.stack.pop().unwrap().get_number();
+                        let num1 = self.stack.pop().unwrap().get_number();
                         self.stack.push(Type::Number(num1 + num2));
                     }
                     "引" => {
-                        let num2 = self.stack.pop()?.get_number();
-                        let num1 = self.stack.pop()?.get_number();
+                        let num2 = self.stack.pop().unwrap().get_number();
+                        let num1 = self.stack.pop().unwrap().get_number();
                         self.stack.push(Type::Number(num1 - num2));
                     }
                     "掛" => {
-                        let num2 = self.stack.pop()?.get_number();
-                        let num1 = self.stack.pop()?.get_number();
+                        let num2 = self.stack.pop().unwrap().get_number();
+                        let num1 = self.stack.pop().unwrap().get_number();
                         self.stack.push(Type::Number(num1 * num2));
                     }
                     "割" => {
-                        let num2 = self.stack.pop()?.get_number();
-                        let num1 = self.stack.pop()?.get_number();
+                        let num2 = self.stack.pop().unwrap().get_number();
+                        let num1 = self.stack.pop().unwrap().get_number();
                         self.stack.push(Type::Number(num1 / num2));
                     }
                     "余" => {
-                        let num2 = self.stack.pop()?.get_number();
-                        let num1 = self.stack.pop()?.get_number();
+                        let num2 = self.stack.pop().unwrap().get_number();
+                        let num1 = self.stack.pop().unwrap().get_number();
                         self.stack.push(Type::Number(num1 % num2));
                     }
                     "等" => {
-                        let str1 = self.stack.pop()?.get_string();
-                        let str2 = self.stack.pop()?.get_string();
+                        let str1 = self.stack.pop().unwrap().get_string();
+                        let str2 = self.stack.pop().unwrap().get_string();
                         self.stack.push(Type::Bool(str1 == str2));
                     }
                     "大" => {
-                        let num2 = self.stack.pop()?.get_number();
-                        let num1 = self.stack.pop()?.get_number();
+                        let num2 = self.stack.pop().unwrap().get_number();
+                        let num1 = self.stack.pop().unwrap().get_number();
                         self.stack.push(Type::Bool(num1 > num2));
                     }
                     "小" => {
-                        let num2 = self.stack.pop()?.get_number();
-                        let num1 = self.stack.pop()?.get_number();
+                        let num2 = self.stack.pop().unwrap().get_number();
+                        let num1 = self.stack.pop().unwrap().get_number();
                         self.stack.push(Type::Bool(num1 < num2));
                     }
                     "和" => {
-                        let bool2 = self.stack.pop()?.get_bool();
-                        let bool1 = self.stack.pop()?.get_bool();
+                        let bool2 = self.stack.pop().unwrap().get_bool();
+                        let bool1 = self.stack.pop().unwrap().get_bool();
                         self.stack.push(Type::Bool(bool1 || bool2));
                     }
                     "積" => {
-                        let bool2 = self.stack.pop()?.get_bool();
-                        let bool1 = self.stack.pop()?.get_bool();
+                        let bool2 = self.stack.pop().unwrap().get_bool();
+                        let bool1 = self.stack.pop().unwrap().get_bool();
                         self.stack.push(Type::Bool(bool1 && bool2));
                     }
                     "否" => {
-                        let bool1 = self.stack.pop()?.get_bool();
+                        let bool1 = self.stack.pop().unwrap().get_bool();
                         self.stack.push(Type::Bool(!bool1));
                     }
                     "代入" => {
-                        let name = self.stack.pop()?.get_string();
-                        let value = self.stack.pop()?;
+                        let name = self.stack.pop().unwrap().get_string();
+                        let value = self.stack.pop().unwrap();
                         self.memory.insert(name, value);
                     }
                     "評価" => {
-                        let code = self.stack.pop()?.get_string();
-                        self.eval(code)?;
+                        let code = self.stack.pop().unwrap().get_string();
+                        self.eval(code)
                     }
                     "条件分岐" => {
-                        let code_false = self.stack.pop()?.get_string();
-                        let code_true = self.stack.pop()?.get_string();
-                        let condition = self.stack.pop()?.get_bool();
+                        let code_false = self.stack.pop().unwrap().get_string();
+                        let code_true = self.stack.pop().unwrap().get_string();
+                        let condition = self.stack.pop().unwrap().get_bool();
                         if condition {
-                            self.eval(code_true)?;
+                            self.eval(code_true)
                         } else {
-                            self.eval(code_false)?;
+                            self.eval(code_false)
                         }
                     }
                     "反復" => {
-                        let code = self.stack.pop()?.get_string();
-                        let condition = self.stack.pop()?.get_string();
+                        let code = self.stack.pop().unwrap().get_string();
+                        let condition = self.stack.pop().unwrap().get_string();
                         while {
                             self.eval(condition.clone());
-                            self.stack.pop()?.get_bool()
+                            self.stack.pop().unwrap().get_bool()
                         } {
                             self.eval(code.clone());
                         }
                     }
-                    _ => return None,
+                    other => self.stack.push(Type::String(other.to_string())),
                 }
             }
         }
-        Some(())
     }
 }
