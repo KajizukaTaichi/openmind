@@ -1,5 +1,10 @@
 use regex::Regex;
-use std::{collections::HashMap, env::args, fs::read_to_string};
+use std::{
+    collections::HashMap,
+    env::args,
+    fs::{read_to_string, File},
+    io::Write,
+};
 
 fn main() {
     let args = args().collect::<Vec<String>>();
@@ -255,6 +260,11 @@ impl Core {
                         let path = self.stack.pop().unwrap().get_string();
                         self.stack
                             .push(Type::String(read_to_string(path).unwrap_or(String::new())));
+                    }
+                    "書" => {
+                        let path = self.stack.pop().unwrap().get_string();
+                        let value = self.stack.pop().unwrap().get_string();
+                        File::create(path).unwrap().write(value.as_bytes()).unwrap();
                     }
                     other => self.stack.push(Type::String(other.to_string())),
                 }
