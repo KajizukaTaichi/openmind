@@ -130,7 +130,7 @@ impl Core {
                 self.stack.push(value.to_owned());
             } else if let Ok(i) = token.parse::<f64>() {
                 self.stack.push(Type::Number(i))
-            } else if Regex::new(r"^[０-９]+(.unwrap():\.[０-９]+)?$")
+            } else if Regex::new(r"^[０-９]+(?:\.[０-９]+)?$")
                 .unwrap()
                 .is_match(&token)
             {
