@@ -326,6 +326,7 @@ impl Core {
                         let value = self.pop().get_string();
                         File::create(path).unwrap().write(value.as_bytes()).unwrap();
                     }
+                    "戻" => return,
                     "終了" => exit(0),
                     other => self.stack.push(Type::String(other.to_string())),
                 }
