@@ -289,6 +289,14 @@ impl Core {
                         self.cache = value.clone();
                         self.memory.insert(name, value);
                     }
+                    "初期化" => {
+                        let name = self.pop().get_string();
+                        let value = self.pop();
+                        self.cache = value.clone();
+                        if !self.memory.contains_key(&name) {
+                            self.memory.insert(name, value);
+                        }
+                    }
                     "定義" => {
                         let name = self.pop().get_string();
                         let code = self.pop().get_string();
