@@ -326,9 +326,17 @@ impl Core {
                         let condition = self.pop().get_string();
                         while {
                             self.eval(condition.clone());
+                            if self.backs != 0 {
+                                self.backs -= 1;
+                                return;
+                            }
                             self.pop().get_bool()
                         } {
                             self.eval(code.clone());
+                            if self.backs != 0 {
+                                self.backs -= 1;
+                                return;
+                            }
                         }
                     }
                     "読" => {
