@@ -254,6 +254,11 @@ impl Core {
                         let num1 = self.pop().get_number();
                         self.stack.push(Type::Number(num1 % num2));
                     }
+                    "乗" => {
+                        let num2 = self.pop().get_number();
+                        let num1 = self.pop().get_number();
+                        self.stack.push(Type::Number(num1.powf(num2)));
+                    }
                     "等" => {
                         let str1 = self.pop().get_string();
                         let str2 = self.pop().get_string();
