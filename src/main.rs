@@ -19,6 +19,7 @@ fn main() {
             ("千".to_string(), Type::Number(1000.0)),
         ]),
         cache: Type::Null,
+        backs: 0,
     };
 
     let args = args().collect::<Vec<String>>();
@@ -115,6 +116,7 @@ impl Type {
 struct Core {
     stack: Vec<Type>,
     memory: HashMap<String, Type>,
+    backs: usize,
     cache: Type,
 }
 
@@ -326,10 +328,18 @@ impl Core {
                         let value = self.pop().get_string();
                         File::create(path).unwrap().write(value.as_bytes()).unwrap();
                     }
-                    "戻" => return,
+                    "戻" => {
+                        self.backs = self.pop().get_number() as usize;
+                    }
                     "終了" => exit(0),
                     other => self.stack.push(Type::String(other.to_string())),
                 }
+            }
+
+            if self.backs != 0 {
+                self.backs -= 1;
+                dbg!(&self.backs);
+                return;
             }
         }
     }
