@@ -13,6 +13,7 @@ fn main() {
             let mut openmind = Core {
                 stack: vec![],
                 memory: HashMap::new(),
+                cache: Type::Null,
             };
             openmind.eval(code);
         } else {
@@ -29,6 +30,7 @@ enum Type {
     String(String),
     Bool(bool),
     Function(String),
+    Null,
 }
 
 impl Type {
@@ -43,6 +45,7 @@ impl Type {
                     0.0
                 }
             }
+            Type::Null => 0.0,
         }
     }
 
@@ -51,6 +54,7 @@ impl Type {
             Type::Number(i) => i.to_string(),
             Type::String(s) | Type::Function(s) => s.to_owned(),
             Type::Bool(b) => if *b { "真" } else { "偽" }.to_string(),
+            Type::Null => String::new(),
         }
     }
 
@@ -59,6 +63,7 @@ impl Type {
             Type::Number(i) => *i != 0.0,
             Type::String(s) | Type::Function(s) => !s.is_empty(),
             Type::Bool(b) => *b,
+            Type::Null => false,
         }
     }
 }
@@ -67,6 +72,7 @@ impl Type {
 struct Core {
     stack: Vec<Type>,
     memory: HashMap<String, Type>,
+    cache: Type,
 }
 
 impl Core {
@@ -152,7 +158,11 @@ impl Core {
             } else if token == "真" {
                 self.stack.push(Type::Bool(true));
             } else if token == "偽" {
-                self.stack.push(Type::Bool(false));
+                self.stack.push(Type::Bool(false))
+            } else if token == "無" {
+                self.stack.push(Type::Null);
+            } else if token == "其" {
+                self.stack.push(self.cache.clone());
             } else if token.starts_with("「") && token.ends_with("」") {
                 let mut token = token.clone();
                 token.remove(token.find("「").unwrap());
@@ -225,6 +235,7 @@ impl Core {
                     "代入" => {
                         let name = self.stack.pop().unwrap().get_string();
                         let value = self.stack.pop().unwrap();
+                        self.cache = value.clone();
                         self.memory.insert(name, value);
                     }
                     "定義" => {
