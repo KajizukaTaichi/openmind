@@ -12,7 +12,14 @@ fn main() {
         if let Ok(code) = read_to_string(path) {
             let mut openmind = Core {
                 stack: vec![],
-                memory: HashMap::from([("改行".to_string(), Type::String("\n".to_string()))]),
+                memory: HashMap::from([
+                    ("改行".to_string(), Type::String("\n".to_string())),
+                    ("十".to_string(), Type::Number(10.0)),
+                    ("百".to_string(), Type::Number(100.0)),
+                    ("千".to_string(), Type::Number(1000.0)),
+                    ("万".to_string(), Type::Number(1_0000.0)),
+                    ("億".to_string(), Type::Number(1_0000_0000.0)),
+                ]),
                 cache: Type::Null,
             };
             openmind.eval(code);
