@@ -253,8 +253,8 @@ impl Core {
                         self.stack.push(Type::Number(num1 % num2));
                     }
                     "等" => {
-                        let str1 = self.pop().get_symbol();
-                        let str2 = self.pop().get_symbol();
+                        let str1 = self.pop().get_string();
+                        let str2 = self.pop().get_string();
                         self.stack.push(Type::Bool(str1 == str2));
                     }
                     "大" => {
