@@ -351,7 +351,6 @@ impl Core {
 
             if self.backs != 0 {
                 self.backs -= 1;
-                dbg!(&self.backs);
                 return;
             }
         }
