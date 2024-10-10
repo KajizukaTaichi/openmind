@@ -221,7 +221,10 @@ impl Core {
                     "入力待" => {
                         let prompt = &self.pop().get_string();
                         self.stack.push(Type::String(
-                            DefaultEditor::new().unwrap().readline(prompt).unwrap(),
+                            DefaultEditor::new()
+                                .unwrap()
+                                .readline(prompt)
+                                .unwrap_or_default(),
                         ))
                     }
                     "結合" => {
