@@ -361,6 +361,11 @@ impl Core {
                         self.stack.push(a);
                         self.stack.push(b);
                     }
+                    "写" => {
+                        let a = self.pop();
+                        self.stack.push(a);
+                        self.stack.push(a);
+                    }
                     "終了" => exit(0),
                     other => self.stack.push(Type::String(other.to_string())),
                 }
