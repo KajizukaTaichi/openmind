@@ -363,7 +363,7 @@ impl Core {
                     }
                     "写" => {
                         let a = self.pop();
-                        self.stack.push(a);
+                        self.stack.push(a.clone());
                         self.stack.push(a);
                     }
                     "終了" => exit(0),
