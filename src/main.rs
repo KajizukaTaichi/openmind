@@ -355,6 +355,12 @@ impl Core {
                     "戻" => {
                         self.backs = self.pop().get_number() as usize;
                     }
+                    "返" => {
+                        let a = self.pop();
+                        let b = self.pop();
+                        self.stack.push(a);
+                        self.stack.push(b);
+                    }
                     "終了" => exit(0),
                     other => self.stack.push(Type::String(other.to_string())),
                 }
