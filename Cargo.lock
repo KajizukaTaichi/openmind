@@ -81,6 +81,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "kaguya"
+version = "0.2.0"
+dependencies = [
+ "regex",
+ "rustyline",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.159"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -123,14 +131,6 @@ dependencies = [
  "cfg-if",
  "cfg_aliases",
  "libc",
-]
-
-[[package]]
-name = "openmind"
-version = "0.2.0"
-dependencies = [
- "regex",
- "rustyline",
 ]
 
 [[package]]
