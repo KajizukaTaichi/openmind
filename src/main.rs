@@ -14,9 +14,6 @@ fn main() {
         memory: HashMap::from([
             ("改行".to_string(), Type::String("\n".to_string())),
             ("空白".to_string(), Type::String(" ".to_string())),
-            ("十".to_string(), Type::Number(10.0)),
-            ("百".to_string(), Type::Number(100.0)),
-            ("千".to_string(), Type::Number(1000.0)),
         ]),
         cache: Type::Null,
         backs: 0,
