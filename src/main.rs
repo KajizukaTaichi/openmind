@@ -49,7 +49,7 @@ fn main() {
             eprintln!("エラー！ファイルが開けませんでした");
         };
     } else {
-        println!("日本語プログラミング言語 OpenMind");
+        println!("日本語プログラミング言語 かぐや");
         let mut rl = DefaultEditor::new().unwrap();
 
         loop {
