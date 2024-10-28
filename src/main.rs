@@ -8,6 +8,28 @@ use std::{
     process::exit,
 };
 
+const DELIMITER: [&str; 19] = [
+    r"[あ-ん]",
+    r"[ア-ン]",
+    r"[a-z]",
+    r"[A-Z]",
+    r"\s",
+    r"、",
+    r",",
+    r"。",
+    r"\.",
+    r"ー",
+    r"\-",
+    r"〜",
+    r"\~",
+    r"！",
+    r"!",
+    r"＾",
+    r"\^",
+    r"？",
+    r"\?",
+];
+
 fn main() {
     let mut openmind = Core {
         stack: vec![],
@@ -140,10 +162,9 @@ impl Core {
                     }
                 }
                 other => {
-                    if Regex::new(
-                        r"[あ-ん]|[ア-ン]|[a-z]|[A-Z]| |\n|\t|\r|　|,|、|。|\.|ー|\-|\~|〜|!|！|＾|\^|\?|？",
-                    ).unwrap()
-                    .is_match(&other.to_string())
+                    if Regex::new(DELIMITER.join("|").as_str())
+                        .unwrap()
+                        .is_match(&other.to_string())
                     {
                         if in_parentheses != 0 {
                             current_token.push(c);
