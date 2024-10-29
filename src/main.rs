@@ -187,6 +187,18 @@ impl Core {
                 continue;
             }
 
+            if self.debug {
+                println!(
+                    "スタック〔 {} 〕 ← {token}",
+                    &self
+                        .stack
+                        .iter()
+                        .map(|i| i.get_symbol())
+                        .collect::<Vec<String>>()
+                        .join(" | ")
+                );
+            }
+
             if let Some(Type::Function(code)) = self.memory.get(&token) {
                 self.eval(code.to_string());
             } else if let Some(value) = self.memory.get(&token) {
@@ -390,18 +402,18 @@ impl Core {
                 self.backs -= 1;
                 return;
             }
+        }
 
-            if self.debug {
-                println!(
-                    "スタック〔 {} 〕",
-                    &self
-                        .stack
-                        .iter()
-                        .map(|i| i.get_symbol())
-                        .collect::<Vec<String>>()
-                        .join(" | ")
-                );
-            }
+        if self.debug {
+            println!(
+                "スタック〔 {} 〕",
+                &self
+                    .stack
+                    .iter()
+                    .map(|i| i.get_symbol())
+                    .collect::<Vec<String>>()
+                    .join(" | ")
+            );
         }
     }
 
