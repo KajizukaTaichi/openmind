@@ -378,6 +378,9 @@ impl Core {
                         self.stack.push(a.clone());
                         self.stack.push(a);
                     }
+                    "捨" => {
+                        self.pop();
+                    }
                     "終了" => exit(0),
                     other => self.stack.push(Type::String(other.to_string())),
                 }
