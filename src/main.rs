@@ -256,6 +256,12 @@ impl Core {
                         let str1 = self.pop().get_string();
                         self.stack.push(Type::String(str1 + &str2));
                     }
+                    "置換" => {
+                        let str3 = self.pop().get_string();
+                        let str2 = self.pop().get_string();
+                        let str1 = self.pop().get_string();
+                        self.stack.push(Type::String(str1.replace(&str2, &str3)));
+                    }
                     "足" => {
                         let num2 = self.pop().get_number();
                         let num1 = self.pop().get_number();
