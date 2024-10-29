@@ -31,26 +31,28 @@ const DELIMITER: [&str; 19] = [
 ];
 
 fn main() {
-    let mut openmind = Core {
+    let mut kaguya = Core {
         stack: vec![],
         memory: HashMap::from([
             ("改行".to_string(), Type::String("\n".to_string())),
             ("空白".to_string(), Type::String(" ".to_string())),
         ]),
         cache: Type::Null,
+        debug: false,
         backs: 0,
     };
 
     let args = args().collect::<Vec<String>>();
     if let Some(path) = args.get(1) {
         if let Ok(code) = read_to_string(path) {
-            openmind.eval(code);
+            kaguya.eval(code);
         } else {
             eprintln!("エラー！ファイルが開けませんでした");
         };
     } else {
         println!("日本語プログラミング言語 かぐや");
         let mut rl = DefaultEditor::new().unwrap();
+        kaguya.debug = true;
 
         loop {
             let mut code = String::new();
@@ -63,16 +65,7 @@ fn main() {
             }
 
             if !code.is_empty() {
-                openmind.eval(code);
-                println!(
-                    "スタック〔 {} 〕",
-                    &openmind
-                        .stack
-                        .iter()
-                        .map(|i| i.get_symbol())
-                        .collect::<Vec<String>>()
-                        .join(" | ")
-                );
+                kaguya.eval(code);
             }
         }
     }
@@ -135,6 +128,7 @@ impl Type {
 struct Core {
     stack: Vec<Type>,
     memory: HashMap<String, Type>,
+    debug: bool,
     backs: usize,
     cache: Type,
 }
@@ -392,6 +386,18 @@ impl Core {
             if self.backs != 0 {
                 self.backs -= 1;
                 return;
+            }
+
+            if self.debug {
+                println!(
+                    "スタック〔 {} 〕",
+                    &self
+                        .stack
+                        .iter()
+                        .map(|i| i.get_symbol())
+                        .collect::<Vec<String>>()
+                        .join(" | ")
+                );
             }
         }
     }
