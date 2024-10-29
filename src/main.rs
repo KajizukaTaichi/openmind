@@ -61,6 +61,7 @@ fn main() {
                 if enter.is_empty() {
                     break;
                 }
+                rl.add_history_entry(&enter).unwrap_or_default();
                 code += &format!("{enter} ");
             }
 
